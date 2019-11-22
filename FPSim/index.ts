@@ -79,7 +79,28 @@ new class extends GameEngine {
         window.addEventListener('keydown', (e: KeyboardEvent) => {
             if (e.key === 'i') this.showDebug = !this.showDebug;
             this.debug.style.display = this.showDebug ? 'block' : 'none';
-        })
+        });
+        const controlsContainer = document.createElement('div');
+        controlsContainer.setAttribute('id', 'controls');
+        [
+            {label: '&#11104', key: 'q', id: 'strafe-left'},
+            {label: '&#11105', key: 'w', id: 'forward'},
+            {label: '&#11106', key: 'e', id: 'strafe-right'},
+            {label: '&#10226', key: 'a', id: 'turn-left'},
+            {label: '&#11107', key: 's', id: 'backward'},
+            {label: '&#10227', key: 'd', id: 'turn-right'},
+        ].forEach(({label, key, id}) => {
+            const el: HTMLButtonElement = document.createElement('button');
+            el.innerHTML = label;
+            el.addEventListener('mousedown', (e: MouseEvent) => this.keyMap.set(key, true));
+            el.addEventListener('touchstart', (e: MouseEvent) => this.keyMap.set(key, true));
+            el.addEventListener('mouseup', (e: MouseEvent) => this.keyMap.delete(key));
+            el.addEventListener('touchend', (e: MouseEvent) => this.keyMap.delete(key));
+            el.setAttribute('class', `control ${id}`);
+            el.setAttribute('title', id);
+            controlsContainer.appendChild(el);
+        });
+        document.body.appendChild(controlsContainer);
     }
 
     private clear() {
