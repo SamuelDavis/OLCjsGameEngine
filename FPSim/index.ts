@@ -16,12 +16,14 @@ new class extends GameEngine {
     private avgFPS: number[] = [];
     private map: GameMap;
     private player: Player;
+    private showDebug: boolean = false;
 
     render(elapsedTime: number): void {
         this.clear();
         this.renderWorld();
         this.renderMap();
-        this.renderDebug(elapsedTime);
+        if (this.showDebug)
+            this.renderDebug(elapsedTime);
     }
 
     update(elapsedTime: number): void {
@@ -68,11 +70,15 @@ new class extends GameEngine {
             '#...........####',
             '################',
         ]);
-        this.player = new Player(2, 2, 2);
+        this.player = new Player(2.0, 2.0, 0.0);
         this.debug = document.createElement('pre');
         document.body.appendChild(this.debug);
         this.halfScale = this.scale / 2;
         this.halfHeight = this.height / 2;
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'i') this.showDebug = !this.showDebug;
+            this.debug.style.display = this.showDebug ? 'block' : 'none';
+        })
     }
 
     private clear() {
@@ -108,20 +114,25 @@ new class extends GameEngine {
 
         this.ctx.restore();
         this.ctx.translate(this.player.x * this.scale, this.player.y * this.scale);
-        this.ctx.clearRect(-this.halfScale, -this.halfScale, this.scale, this.scale);
         this.ctx.rotate(this.player.a);
         this.ctx.fillText('@', 0, 0);
         this.ctx.restore();
     }
 
     private renderDebug(elapsedTime: number) {
+        const formatFloat = (f) => parseFloat(f.toFixed(7));
         const FPS = 1000 / elapsedTime;
         this.avgFPS.push(FPS);
         while (this.avgFPS.length > 60) this.avgFPS.shift();
+        const avg = this.avgFPS.reduce((acc: number, fps: number) => acc + fps, 0) / this.avgFPS.length;
         this.debug.innerText = JSON.stringify({
-            FPS: FPS.toFixed(7),
-            avg: (this.avgFPS.reduce((acc: number, fps: number) => acc + fps, 0) / this.avgFPS.length).toFixed(7),
-            player: this.player,
+            FPS: formatFloat(FPS),
+            avg: formatFloat(avg),
+            player: {
+                x: formatFloat(this.player.x),
+                y: formatFloat(this.player.y),
+                a: formatFloat(this.player.a),
+            },
         }, null, 2);
     }
 
