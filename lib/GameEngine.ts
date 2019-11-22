@@ -9,17 +9,13 @@ export default abstract class GameEngine {
     protected readonly keyMap: KeyMap;
     protected readonly display: Display2D;
 
-    constructor(width: number, height: number, scale: number, container = document.body) {
+    protected constructor(width: number, height: number, scale: number, container = document.body) {
         this.width = width;
         this.height = height;
         this.scale = scale;
 
         this.display = new Display2D(this.width * this.scale, this.height * this.scale, container);
         this.keyMap = new KeyMap();
-
-        this.init();
-        this.display.draw(this.render.bind(this));
-        this.keyMap.listen(this.update.bind(this));
     }
 
     protected get pxWidth(): number {
@@ -34,7 +30,10 @@ export default abstract class GameEngine {
         return this.display.ctx;
     }
 
-    protected abstract init(): void;
+    protected start(): void {
+        this.display.draw(this.render.bind(this));
+        this.keyMap.listen(this.update.bind(this));
+    }
 
     protected abstract update(elapsedTime: number): void;
 

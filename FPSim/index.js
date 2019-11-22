@@ -3,7 +3,7 @@ import Player from "./src/Player.js";
 import GameMap from "./src/GameMap.js";
 new class extends GameEngine {
     constructor() {
-        super(...arguments);
+        super(120, 40, 16);
         this.HALF_PI = Math.PI / 2;
         this.FONT = 'monospace';
         this.FOV = Math.PI / 4;
@@ -33,11 +33,6 @@ new class extends GameEngine {
             '################',
         ]);
         this.avgFPS = [];
-    }
-    get showingDebug() {
-        return this.debug.style.display === 'block';
-    }
-    init() {
         // setup debug overlay
         this.debug.style.display = 'none';
         document.body.appendChild(this.debug);
@@ -67,6 +62,10 @@ new class extends GameEngine {
             controlsContainer.appendChild(el);
         });
         document.body.appendChild(controlsContainer);
+        this.start();
+    }
+    get showingDebug() {
+        return this.debug.style.display === 'block';
     }
     render(elapsedTime) {
         this.clear();
@@ -213,4 +212,4 @@ new class extends GameEngine {
             }
         }
     }
-}(120, 40, 16);
+};

@@ -40,7 +40,8 @@ new class extends GameEngine {
         return this.debug.style.display === 'block';
     }
 
-    protected init() {
+    constructor() {
+        super(120, 40, 16);
         // setup debug overlay
         this.debug.style.display = 'none';
         document.body.appendChild(this.debug);
@@ -70,6 +71,7 @@ new class extends GameEngine {
             controlsContainer.appendChild(el);
         });
         document.body.appendChild(controlsContainer);
+        this.start();
     }
 
     protected render(elapsedTime: DOMHighResTimeStamp) {
@@ -224,4 +226,4 @@ new class extends GameEngine {
             }
         }
     }
-}(120, 40, 16);
+};
