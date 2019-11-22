@@ -11,6 +11,14 @@ export default class Display2D {
         this.ctx = canvas.getContext('2d');
     }
 
+    get width() {
+        return this.ctx.canvas.width;
+    }
+
+    get height() {
+        return this.ctx.canvas.height;
+    }
+
     get pendingDraw(): boolean {
         return Boolean(this.nextAnimationFrameId);
     }

@@ -6,27 +6,81 @@ new class extends GameEngine {
     private readonly HALF_PI: number = Math.PI / 2;
     private readonly FONT: string = 'monospace';
     private readonly FOV: number = Math.PI / 4;
-    private readonly halfFOV: number = this.FOV / 2;
+    private readonly HALF_FOV: number = this.FOV / 2;
     private readonly RAY_STEP_SIZE: number = 0.5;
     private readonly BOUND_SENSITIVITY: number = 0.006;
 
-    private halfHeight: number;
-    private halfScale: number;
-    private debug: HTMLPreElement;
-    private avgFPS: number[] = [];
-    private map: GameMap;
-    private player: Player;
-    private showDebug: boolean = false;
+    private readonly halfHeight: number = this.height / 2;
+    private readonly halfScale = this.scale / 2;
+    private readonly debug: HTMLPreElement = document.createElement('pre');
 
-    render(elapsedTime: number): void {
+    private readonly player: Player = new Player(3.0, 3.0, 1.57);
+    private readonly map: GameMap = new GameMap([
+        '################',
+        '#...#..........#',
+        '#..............#',
+        '#...#..........#',
+        '###.#..........#',
+        '#..............#',
+        '#...############',
+        '#..............#',
+        '#....######....#',
+        '#....#####.....#',
+        '#....####......#',
+        '#....###.......#',
+        '#..#.##.......##',
+        '#....#.......###',
+        '#...........####',
+        '################',
+    ]);
+
+    private avgFPS: number[] = [];
+
+    private get showingDebug(): boolean {
+        return this.debug.style.display === 'block';
+    }
+
+    protected init() {
+        // setup debug overlay
+        this.debug.style.display = 'none';
+        document.body.appendChild(this.debug);
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'i') this.debug.style.display = this.showingDebug ? 'none' : 'block';
+        });
+
+        // attach mobile controls
+        const controlsContainer = document.createElement('div');
+        controlsContainer.setAttribute('id', 'controls');
+        [
+            {key: 'q', id: 'strafe-left'},
+            {key: 'w', id: 'forward'},
+            {key: 'e', id: 'strafe-right'},
+            {key: 'a', id: 'turn-left'},
+            {key: 's', id: 'backward'},
+            {key: 'd', id: 'turn-right'},
+        ].forEach(({key, id}) => {
+            const el: HTMLButtonElement = document.createElement('button');
+            el.innerHTML = id.replace('-', ' ');
+            el.addEventListener('mousedown', () => this.keyMap.set(key, true));
+            el.addEventListener('touchstart', () => this.keyMap.set(key, true));
+            el.addEventListener('mouseup', () => this.keyMap.delete(key));
+            el.addEventListener('touchend', () => this.keyMap.delete(key));
+            el.setAttribute('class', `control ${id}`);
+            el.setAttribute('title', id);
+            controlsContainer.appendChild(el);
+        });
+        document.body.appendChild(controlsContainer);
+    }
+
+    protected render(elapsedTime: DOMHighResTimeStamp) {
         this.clear();
         this.renderWorld();
         this.renderMap();
-        if (this.showDebug)
+        if (this.showingDebug)
             this.renderDebug(elapsedTime);
     }
 
-    update(elapsedTime: number): void {
+    protected update(elapsedTime: DOMHighResTimeStamp) {
         if (this.keyMap.has('a')) this.player.a -= this.player.speed.t * elapsedTime;
         if (this.keyMap.has('d')) this.player.a += this.player.speed.t * elapsedTime;
         if (this.keyMap.has('w')) {
@@ -49,58 +103,6 @@ new class extends GameEngine {
             if (this.map.impassible(this.player.x, this.player.y))
                 this.player.advance(-this.player.speed.b * elapsedTime, this.HALF_PI);
         }
-    }
-
-    protected init() {
-        this.map = new GameMap([
-            '################',
-            '#...#..........#',
-            '#..............#',
-            '#...#..........#',
-            '###.#..........#',
-            '#..............#',
-            '#...############',
-            '#..............#',
-            '#....######....#',
-            '#....#####.....#',
-            '#....####......#',
-            '#....###.......#',
-            '#..#.##.......##',
-            '#....#.......###',
-            '#...........####',
-            '################',
-        ]);
-        this.player = new Player(2.0, 2.0, 0.0);
-        this.debug = document.createElement('pre');
-        this.debug.style.display = 'none';
-        document.body.appendChild(this.debug);
-        this.halfScale = this.scale / 2;
-        this.halfHeight = this.height / 2;
-        window.addEventListener('keydown', (e: KeyboardEvent) => {
-            if (e.key === 'i') this.showDebug = !this.showDebug;
-            this.debug.style.display = this.showDebug ? 'block' : 'none';
-        });
-        const controlsContainer = document.createElement('div');
-        controlsContainer.setAttribute('id', 'controls');
-        [
-            {key: 'q', id: 'strafe-left'},
-            {key: 'w', id: 'forward'},
-            {key: 'e', id: 'strafe-right'},
-            {key: 'a', id: 'turn-left'},
-            {key: 's', id: 'backward'},
-            {key: 'd', id: 'turn-right'},
-        ].forEach(({key, id}) => {
-            const el: HTMLButtonElement = document.createElement('button');
-            el.innerHTML = id.replace('-', ' ');
-            el.addEventListener('mousedown', () => this.keyMap.set(key, true));
-            el.addEventListener('touchstart', () => this.keyMap.set(key, true));
-            el.addEventListener('mouseup', () => this.keyMap.delete(key));
-            el.addEventListener('touchend', () => this.keyMap.delete(key));
-            el.setAttribute('class', `control ${id}`);
-            el.setAttribute('title', id);
-            controlsContainer.appendChild(el);
-        });
-        document.body.appendChild(controlsContainer);
     }
 
     private clear() {
@@ -161,7 +163,7 @@ new class extends GameEngine {
     private renderWorld() {
         const maxRayLength = Math.max(this.map.width, this.map.height);
         for (let x: number = 0; x < this.width; x++) {
-            const fRayAngle: number = (this.player.a - this.halfFOV) + (x / this.width) * this.FOV;
+            const fRayAngle: number = (this.player.a - this.HALF_FOV) + (x / this.width) * this.FOV;
             const fEyeX: number = Math.cos(fRayAngle);
             const fEyeY: number = Math.sin(fRayAngle);
             let fDistanceToWall: number = 0.0;
