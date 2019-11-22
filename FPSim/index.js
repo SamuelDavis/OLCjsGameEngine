@@ -67,6 +67,7 @@ new class extends GameEngine {
         ]);
         this.player = new Player(2.0, 2.0, 0.0);
         this.debug = document.createElement('pre');
+        this.debug.style.display = 'none';
         document.body.appendChild(this.debug);
         this.halfScale = this.scale / 2;
         this.halfHeight = this.height / 2;
