@@ -79,15 +79,15 @@ new class extends GameEngine {
         const controlsContainer = document.createElement('div');
         controlsContainer.setAttribute('id', 'controls');
         [
-            { label: '&#11104', key: 'q', id: 'strafe-left' },
-            { label: '&#11105', key: 'w', id: 'forward' },
-            { label: '&#11106', key: 'e', id: 'strafe-right' },
-            { label: '&#10226', key: 'a', id: 'turn-left' },
-            { label: '&#11107', key: 's', id: 'backward' },
-            { label: '&#10227', key: 'd', id: 'turn-right' },
-        ].forEach(({ label, key, id }) => {
+            { key: 'q', id: 'strafe-left' },
+            { key: 'w', id: 'forward' },
+            { key: 'e', id: 'strafe-right' },
+            { key: 'a', id: 'turn-left' },
+            { key: 's', id: 'backward' },
+            { key: 'd', id: 'turn-right' },
+        ].forEach(({ key, id }) => {
             const el = document.createElement('button');
-            el.innerHTML = label;
+            el.innerHTML = id.replace('-', ' ');
             el.addEventListener('mousedown', (e) => this.keyMap.set(key, true));
             el.addEventListener('touchstart', (e) => this.keyMap.set(key, true));
             el.addEventListener('mouseup', (e) => this.keyMap.delete(key));
