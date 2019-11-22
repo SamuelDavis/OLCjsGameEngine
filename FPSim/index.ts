@@ -1,4 +1,4 @@
-import GameEngine from "../GameEngine.js";
+import GameEngine from "../lib/GameEngine.js";
 import Player from "./src/Player.js";
 import GameMap from "./src/GameMap.js";
 
@@ -92,10 +92,10 @@ new class extends GameEngine {
         ].forEach(({key, id}) => {
             const el: HTMLButtonElement = document.createElement('button');
             el.innerHTML = id.replace('-', ' ');
-            el.addEventListener('mousedown', (e: MouseEvent) => this.keyMap.set(key, true));
-            el.addEventListener('touchstart', (e: MouseEvent) => this.keyMap.set(key, true));
-            el.addEventListener('mouseup', (e: MouseEvent) => this.keyMap.delete(key));
-            el.addEventListener('touchend', (e: MouseEvent) => this.keyMap.delete(key));
+            el.addEventListener('mousedown', () => this.keyMap.set(key, true));
+            el.addEventListener('touchstart', () => this.keyMap.set(key, true));
+            el.addEventListener('mouseup', () => this.keyMap.delete(key));
+            el.addEventListener('touchend', () => this.keyMap.delete(key));
             el.setAttribute('class', `control ${id}`);
             el.setAttribute('title', id);
             controlsContainer.appendChild(el);
