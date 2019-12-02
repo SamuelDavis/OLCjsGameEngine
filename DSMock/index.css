@@ -1,0 +1,75 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Monospace, Arial, sans-serif;
+    background-color: transparent;
+    color: white;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+html, body, #controls {
+    background-color: black;
+}
+
+canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#controls {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#controls button {
+    width: 100%;
+    height: 50%;
+    min-height: 50px;
+    flex-basis: 33.33%;
+}
+
+p, h1 {
+    width: 100%;
+    text-align: center;
+}
+
+a.github {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+pre {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+@media (max-height: 500px) {
+    p, h1 {
+        display: none;
+    }
+
+    a.github {
+        top: auto;
+        bottom: 0;
+    }
+
+    #controls {
+        opacity: 25%;
+        position: absolute;
+        top: 0;
+    }
+}
